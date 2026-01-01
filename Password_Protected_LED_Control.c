@@ -24,6 +24,19 @@
 #include <xc.h>
 #define _XTAL_FREQ 6000000
 
+/*
+    Application problem
+
+Design a secure LED control system:
+
+A switch is used to enter a password sequence (e.g., 1-0-1)
+
+If the correct sequence is entered → LED turns ON
+
+Wrong sequence → LED blinks 3 times as error indication
+
+👉 Real-world use: Door lock / device authorization indicator
+*/
 void blink_once()
 {
     RB1 = 1;
@@ -87,5 +100,6 @@ int main(){
     }
     }
     }
+
 
 
