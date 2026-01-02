@@ -22,7 +22,7 @@
 // Use project enums instead of #define for ON and OFF.
 
 #include <xc.h>
-#define _XTAL_FREQ 6000000
+#define _XTAL_FREQ 16000000
 
 
 /*
@@ -70,3 +70,4 @@ void main(void) {
  
 }
 }
+
