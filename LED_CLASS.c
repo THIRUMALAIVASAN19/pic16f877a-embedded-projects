@@ -29,7 +29,7 @@ void main(void) {
     PORTB=0x00;// all pins are low
     while(1){
         PORTB=0x08;// RB3 is high
-        __delay_ms*(1000);
+        __delay_ms(1000);
         PORTB=0x00; // RB3 is low
         __delay_ms(1000);
         
