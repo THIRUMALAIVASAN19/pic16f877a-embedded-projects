@@ -24,9 +24,6 @@
 #include <xc.h>
 #define _XTAL_FREQ 16000000
 
-
-#include <xc.h>
-
 void main(void) {
     TRISB=0xF7; // RB3 is output and other all input
     PORTB=0x00;// all pins are low
