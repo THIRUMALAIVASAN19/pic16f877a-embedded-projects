@@ -1,38 +1,34 @@
-# PIC16F877A Firmware Projects
+#!/usr/bin/env bash
+# Run this from the root of your cloned pic16f877a-embedded-projects repo.
+# It creates the folder structure and moves files with git mv so history is preserved.
+set -e
 
-This repository contains a collection of PIC16F877A firmware modules and example programs written in C, demonstrating various peripheral interfaces and embedded system tasks using the PIC16F877A microcontroller.
+mkdir -p 01-i2c-eeprom 02-lcd-7segment-display 03-led-control-smart-corridor \
+         04-password-protected-access 05-adc-battery-gas-sensing 06-rtc-clock \
+         07-uart-communication 08-timers-pwm-interrupts docs
 
-PIC16F877A is an 8-bit microcontroller widely used in embedded applications due to its rich peripheral set including GPIO, ADC, Timers, USART, PWM, and I²C. :contentReference[oaicite:0]{index=0}
+# 01 - I2C EEPROM
+git mv I2C_EEPROM.c I2C_EEPROM.h i2c_eeprom_task.c i2c_eeprom_task.h main.c 01-i2c-eeprom/
 
----
+# 02 - LCD & 7-Segment
+git mv LCD_CLASS.c 7segment.c 02-lcd-7segment-display/
 
-##  Features
+# 03 - LED control / smart corridor
+git mv LED_CLASS.c Smart_Corridor_Light_Controller.c pull_down.c pull_up.c 03-led-control-smart-corridor/
 
-This repository includes the following modules and examples:
+# 04 - Password protected access
+git mv Password_Protected_LED_Control.c 04-password-protected-access/
 
-- **7-Segment Display Control**
-- **LCD Interfacing**
-- **LED Control**
-- **PWM Generation**
-- **I²C EEPROM Interface**
-- **UART Communication**
-- **Timer-Based Tasks**
-- **ADC Sampling Tasks**
+# 05 - ADC / battery / gas sensing
+git mv adc_class.c adctask.c battery.c mq.c 05-adc-battery-gas-sensing/
 
-Each example is designed to demonstrate a peripheral function or embedded task with structured code for easy understanding and extension.
+# 06 - RTC
+git mv RTC.c 06-rtc-clock/
 
----
+# 07 - UART
+git mv rxclass.c txclass.c 07-uart-communication/
 
-##  Tools & Environment
+# 08 - Timers / PWM / interrupts
+git mv timer.c pwm.c intclass.c inttask.c main_task.c memory_map_switch.c 08-timers-pwm-interrupts/
 
-To work with these projects you need:
-
-- **MPLAB X IDE** – Official IDE for PIC microcontroller development. :contentReference[oaicite:1]{index=1}  
-- **XC8 Compiler** – C compiler from Microchip for PIC devices. :contentReference[oaicite:2]{index=2}  
-- **Proteus Design Suite (optional)** – For simulation of circuits before hardware implementation. :contentReference[oaicite:3]{index=3}  
-- **PICkit / PICKIT Programmer** – To program the PIC16F877A device.
-
----
-
-## 📁 Repository Structure
-
+echo "Done. Review with 'git status', then add per-project README.md files before committing."
