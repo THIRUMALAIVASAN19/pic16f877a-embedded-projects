@@ -1,0 +1,57 @@
+#include <xc.h>
+#define _XTAL_FREQ 4000000 // Define crystal frequency for delay functions
+
+unsigned char count=0;// Counter for Timer1 interrupt occurrences
+void timer1_init(void); 
+
+void main()
+{
+    timer1_init();
+    while(1)
+    {
+        PORTB=0xFF;// 1111 1111 all pins is high
+        __delay_ms(500);
+        PORTB=0x00;// 0000 0000 all pins is low
+        __delay_ms(500);
+    }
+}
+
+
+void timer1_init(void)
+{
+    // pin configuration
+    TRISB=0x00; //0000 0000 Set PORTB as output
+    TRISD=0x00;//0000 0000 Set PORTD as output
+    PORTB=0x00;//0000 0000 Initialize PORTB to low
+    PORTD=0x00; //0000 0000 Initialize PORTD to low
+    //timer 1 configuration
+    TMR1=15535;// preload the value
+    T1CON &= ~(1 << 1);// internal clock (Fosc/4)
+    T1CON &= (00 << 4);//1:1 per-scale value
+    T1CON |= (1 << 0); //enable timer1
+    
+    //interrupt configuration
+    PIE1 |=(1 << 0);//TMR1 Overflow Interrupt Enable bit
+    PIR1 &=~(1 << 0);// Clear Timer1 interrupt flag (TMR1IF)
+    INTCON |=(3 << 6);// Enable Global Interrupt (GIE) and Peripheral Interrupt (PEIE)
+    
+}
+// Interrupt Service Routine
+void __interrupt() _ISR(void)
+{
+    if(PIR1 & 0x01) 
+    {
+        count++;
+        if(count == 20 )
+        {
+        PORTD = ~ PORTD;
+        count=0;
+       
+        }
+         TMR1=15535;// preload the value
+         PIR1 &=~(1 << 0);// Clear Timer1 interrupt flag
+  
+    }
+
+}
+
