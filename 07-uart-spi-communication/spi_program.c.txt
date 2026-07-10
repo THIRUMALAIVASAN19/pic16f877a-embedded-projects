@@ -1,0 +1,138 @@
+
+							SPI CLASS PROGRAM
+
+    MASTER MODE CODE
+
+#include <xc.h>
+#include <stdint.h>
+#define _XTAL_FREQ 4000000
+
+//--------------------------------
+// IO Pins Defines (Mappings)
+#define UP     RB0
+#define DOWN   RB1
+#define SEND   RB2
+//--------------------------------
+
+// Functions Declarations
+void SPI_Master_Init(void);
+void SPI_Write(uint8_t data);
+
+//--------------------------------
+void main(void)
+{
+    uint8_t Data = 0;     // The Data Byte
+    SPI_Master_Init();    // Initialize SPI Master Mode
+    TRISB = 0x07;         // RB0, RB1, RB2 as Input (buttons)
+    TRISD = 0x00;         // PORTD as Output
+    PORTD = 0x00;         // Initially OFF
+    while (1)
+    {
+        if (UP)           // Increment Data
+        {
+            Data++;
+            __delay_ms(500); // debounce delay
+        }
+        if (DOWN)         // Decrement Data
+        {
+            Data--;
+            __delay_ms(500);
+        }
+        if (SEND)         // Send Data via SPI
+        {
+            SPI_Write(Data);
+            __delay_ms(500);
+        }
+        PORTD = Data;     // Display Data on LEDs
+    }
+}
+
+//--------------------------------
+// SPI Master Initialization
+void SPI_Master_Init(void)
+{
+    // Set SPI Master mode, clock = Fosc/64
+    SSPCON = 0x20;   // SSPEN=1 (enable SPI), SSPM3:SSPM0=0000 (Fosc/4), will change below
+    SSPCONbits.SSPM = 0b0010; // Master mode, clock = Fosc/64
+
+    SSPSTAT = 0x00;  // SMP=0 (middle), CKE=0 (transmit on falling edge)
+    SSPCONbits.CKP = 0; // Idle state for clock is low
+
+ // Configure SPI I/O pins
+  
+    TRISC=0x10;//RC5 = 0; -> SDO output,RC4 = 1;-> SDI input,C3 = 0;->SCK output
+}
+
+//--------------------------------
+// Send one byte via SPI
+void SPI_Write(uint8_t data)
+{
+    SSPBUF = data;              // Write to buffer to start transmission
+    while (!SSPSTATbits.BF);    // Wait until transmission complete
+}
+
+
+
+
+     slave MODE CODE
+
+
+#include <xc.h>
+#include <stdint.h>
+
+ // Function prototypes
+void SPI_Slave_Init();
+uint8_t SPI_Read();
+ 
+uint8_t Data; // Global variable to store recived data
+             
+ 
+void main(void) 
+{
+  SPI_Slave_Init(); 
+  TRISB = 0x00;
+  while(1)
+  {
+    // show received value
+    PORTB = Data; 
+  }
+  return;
+}
+ 
+void SPI_Slave_Init()
+{
+// Set SPI Mode To Slave + SS Enabled 
+SSPCON =0x24;// Enable The Synchronous Serial Port
+// Configure The Clock Polarity & Phase (SPI Mode Num. 1)
+SSPSTAT=0x00;// SMP=0,CKE=0,CKP=0
+// Configure The IO Pins For SPI Master Mode
+TRISC=0x18;//RC5 = 0 SDO -> Output,RC4 = 1 SDI -> Input,RC3 = 1 SCK -> Intput
+ADCON1=0x06;// Set SS (RA5/AN4) To Be Digital IO
+TRISA=0x20;// SS -> Input
+// Enable Interrupts
+  SSPIE = 1;
+  PEIE = 1;
+  GIE = 1;
+}
+ 
+uint8_t SPI_Read() 
+{
+  uint8_t Data;
+  if(BF) // Check If Any New Data Is Received
+  {
+    Data = SSPBUF; // Read The Buffer
+    BF = 0; // Clear The Buffer-Filled Indicator Bit
+    SSPIF = 0; // Clear The Interrupt Flag Bit
+    SSPOV = 0; // Clear The Overflow Indicator Bit
+    return Data;
+  }
+}
+ 
+void __interrupt() ISR(void)
+{
+  if(SSPIF) 
+  {
+    Data = SSPBUF;//Read The Buffer(clears BF)
+    SSPIF = 0; // Clear The Interrupt Flag
+  }
+}

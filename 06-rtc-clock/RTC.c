@@ -21,9 +21,11 @@
 
 
 #include <xc.h>
+
 #define RS RC2// LCD RS pin connected to RC2
 #define EN RC1// LCD enable pin connected to RC1
 #define _XTAL_FREQ 20000000// 20MHz crystal frequency
+
 // function
 void init(void);
 void i2c_init(const unsigned long);
@@ -38,6 +40,7 @@ int bcd_2_dec(int);
 int dec_2_bcd(int);
 void set_time_date(void);
 void update(void);
+
 // variable
 unsigned char msg1[5]={"TIME:"};
 unsigned char msg2[5]={"DATE:"};
@@ -50,6 +53,7 @@ unsigned char month=07;
 unsigned int year=25;
 unsigned char am_pm,raw;
 unsigned char sec1,sec2,min1,min2,hour1,hour2,date1,date2,month1,month2,year1,year2;
+
 void main()
 {
     init();
@@ -123,7 +127,8 @@ void main()
         __delay_ms(500);   
     }
 }
-//================ Initialization ================
+
+//================  LCD Initialization ================
 void init(void)
 {
     TRISC=0x18;// SDA, SCL as input
@@ -162,6 +167,7 @@ void LCD_Input(unsigned char i)
     EN=0;
     __delay_ms(100);
 }
+
 //================ I2C ================
 void i2c_init(const unsigned long feq_k)
 {
@@ -203,6 +209,7 @@ int i2c_write(unsigned char temp)
     i2c_wait();
     SSPBUF=temp;
 }
+
 //================ RTC BCD ===================
 int bcd_2_dec(int temp)
 {

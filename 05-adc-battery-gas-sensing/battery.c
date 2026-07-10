@@ -32,7 +32,7 @@ void condition(void);// condition of battery
 unsigned char p,q,value;// variable declaration 
 unsigned int r1,r2,r3;// variable declaration
 float s,t;// variable declaration
-unsigned char arr[15]={"S.NEGHASRI"};// array declaration 
+unsigned char arr[15]={"BAT VOL=     "};// array declaration 
 void main() 
 {
  init();
